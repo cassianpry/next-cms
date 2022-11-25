@@ -4,7 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useContext, useState } from "react";
-import { AuthContext } from "../context/auth";
+import { AuthContext } from "../src/context/auth";
 import { useRouter } from "next/router";
 
 const Signup = () => {

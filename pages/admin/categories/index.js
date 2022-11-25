@@ -3,7 +3,7 @@ import { Button, Col, Form, Input, Row } from "antd";
 import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import AdminLayout from "../../../components/layout/AdminLayout";
+import AdminLayout from "../../../src/components/layout/AdminLayout";
 
 export default function Categories() {
   //state

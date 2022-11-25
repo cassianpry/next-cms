@@ -1,11 +1,11 @@
-import { Button } from 'antd'
-import Head from 'next/head'
-import { useContext } from 'react'
-import { AuthContext } from '../context/auth'
+import { Button } from "antd";
+import Head from "next/head";
+import { useContext } from "react";
+import { AuthContext } from "../src/context/auth";
 
 export default function Home() {
   //context
-  const [auth, setAuth] = useContext(AuthContext)
+  const [auth, setAuth] = useContext(AuthContext);
   return (
     <div>
       <Head>
@@ -17,5 +17,5 @@ export default function Home() {
       <Button type="primary">Primary Button</Button>
       <pre>{JSON.stringify(auth, null, 4)}</pre>
     </div>
-  )
+  );
 }
