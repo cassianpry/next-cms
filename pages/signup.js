@@ -3,13 +3,13 @@ import { Button, Col, Form, Input, Row } from "antd";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../src/context/auth";
 import { useRouter } from "next/router";
 
 const Signup = () => {
   //context
-  const [aurh, setAuth] = useContext(AuthContext);
+  const [auth, setAuth] = useContext(AuthContext);
 
   //hook
   const router = useRouter();
@@ -17,8 +17,13 @@ const Signup = () => {
   //State
   const [loading, setLoading] = useState(false);
 
-  //process.env.NEXT_PUBLIC_API
+  useEffect(() => {
+    if (auth?.token) {
+      router.push("/");
+    }
+  }, [auth]);
 
+  //process.env.NEXT_PUBLIC_API
   const onFinish = async (values) => {
     console.log("Received values of form: ", values);
     setLoading(true);

@@ -2,7 +2,7 @@ import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row } from "antd";
 import Link from "next/link";
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { AuthContext } from "../src/context/auth";
 import { useRouter } from "next/router";
@@ -15,6 +15,12 @@ export default function Signin() {
   //hooks
   const router = useRouter();
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (auth?.token) {
+      router.push("/");
+    }
+  }, [auth]);
 
   const onFinish = async (values) => {
     console.log("Received values of form: ", values);
@@ -35,9 +41,16 @@ export default function Signin() {
         localStorage.setItem("auth", JSON.stringify(data));
         toast.success("Login successfully!");
         setLoading(false);
-        //redirect
         form.resetFields();
-        router.push("/admin");
+
+        //redirect
+        if (data?.user?.role === "Admin") {
+          router.push("/admin");
+        } else if (data?.user?.role === "Author") {
+          router.push("/author");
+        } else {
+          router.push("/subiscriber");
+        }
       }
     } catch (err) {
       setLoading(false);

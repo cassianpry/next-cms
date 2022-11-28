@@ -124,6 +124,7 @@ samp {
   font-size: 1em;
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier,
     monospace;
+    color: "rgba(255, 255, 255, 0.65)";
 }
 pre {
   margin-top: 0;
@@ -221,6 +222,29 @@ legend {
   line-height: inherit;
   white-space: normal;
 }
+
+.modalStyle .ant-modal-header, .modalStyle .ant-modal-content, .modalStyle .ant-modal-body {
+  color: rgba(255, 255, 255, 0.65);
+  background-color: rgb(30, 30, 30);
+
+}
+
+.ant-input {
+  color: rgba(255, 255, 255, 0.65);
+  background-color: rgb(30, 30, 30);
+
+}
+
+.ant-input-prefix {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.ant-input-affix-wrapper{
+  color: rgba(255, 255, 255, 0.65);
+  background-color: rgb(30, 30, 30);
+  border-color:rgba(255, 255, 255, 0.65)
+}
+
 progress {
   vertical-align: baseline;
 }
@@ -259,4 +283,7 @@ mark {
 
 span {
   color: rgba(255, 255, 255, 0.65);
+}
+.text{
+  color: "rgba(255, 255, 255, 0.65)";
 }
