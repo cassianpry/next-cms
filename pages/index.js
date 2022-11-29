@@ -15,7 +15,7 @@ export default function Home() {
       </Head>
       <h1>Home</h1>
       <Button type="primary">Primary Button</Button>
-      <pre>{JSON.stringify(auth, null, 4)}</pre>
+      {/* <pre>{JSON.stringify(auth, null, 4)}</pre> */}
     </div>
   );
 }

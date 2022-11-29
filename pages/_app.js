@@ -2,7 +2,7 @@ import { Layout } from "antd";
 import { Toaster } from "react-hot-toast";
 import NavBar from "../src/components/NavBar";
 import { AuthProvider } from "../src/context/auth";
-import "../styles/global.css";
+import "../src/styles/global.css";
 
 const { Footer } = Layout;
 
