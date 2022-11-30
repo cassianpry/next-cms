@@ -267,10 +267,34 @@ mark {
 }
 
 span {
-  color: rgba(255, 255, 255, 0.65);
+  color: #ffffffa6;
 }
 
-.mde-header {
+.ant-select-selection-item-content {
+  color: #1e1e1e;
+}
+
+.editor-toolbar {
+  color: #ffffffa6;
+}
+
+.editor-toolbar :hover {
+  color: #1e1e1e;
+}
+.editor-statusbar {
+  border-bottom: 1px solid;
+  border-radius: 10px;
+  border-color: #ffffff;
+}
+
+.active {
+  color: #1e1e1e;
+}
+
+.cm-variable-2 {
+  color: black;
+}
+/* .mde-header {
   flex-shrink: 0;
   display: flex;
   flex-wrap: wrap;
@@ -594,4 +618,4 @@ ul.mde-suggestions li:hover,
 ul.mde-suggestions li[aria-selected="true"] {
   color: white;
   background-color: #0366d6;
-}
+} */

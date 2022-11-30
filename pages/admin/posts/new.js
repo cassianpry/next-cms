@@ -1,20 +1,57 @@
-import ReactMde from "react-mde";
 import AdminLayout from "../../../src/components/layout/AdminLayout";
-import * as Showdown from "showdown";
-import { useState } from "react";
-import { Col, Input, Row } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import { Col, Input, Row, Select } from "antd";
+import axios from "axios";
+import Resizer from "react-image-file-resizer";
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
 
-const converter = new Showdown.Converter({
-  tables: true,
-  simplifiedAutoLink: true,
-  strikethrough: true,
-  tasklists: true,
-});
+const { Option } = Select;
+
+const resizeFile = (file) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      720,
+      400,
+      "JPEG",
+      100,
+      0,
+      (uri) => {
+        resolve(uri);
+      },
+      "base64"
+    );
+  });
+
+const uploadImage = async (file) => {
+  console.log("uploadImageData...");
+  try {
+    const image = await resizeFile(file);
+    console.log("Image Base64 => ", image);
+    return;
+    const { data } = await axios.post("/upload-image", { image });
+    console.log("Upload file Response => ", data);
+    return data.url;
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 function NewPost() {
+  // load categories from database
+  const loadCategories = async () => {
+    try {
+      const { data } = await axios.get("/categories");
+      setLoadedCategories(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   // load from localStorage
   const savedTitle = () => {
-    if (process.browser) {
+    if (typeof window === "object") {
       if (localStorage.getItem("post-title")) {
         return JSON.parse(localStorage.getItem("post-title"));
       }
@@ -22,38 +59,11 @@ function NewPost() {
   };
 
   const savedContent = () => {
-    if (process.browser) {
+    if (typeof window === "object") {
       if (localStorage.getItem("post-content")) {
         return JSON.parse(localStorage.getItem("post-content"));
       }
     }
-  };
-
-  const [title, setTitle] = useState(savedTitle());
-  const [content, setContent] = useState(savedContent());
-  const [selectedTab, setSelectedTab] = useState("write");
-
-  const save = async function* (data) {
-    // Promise that waits for "time" milliseconds
-    const wait = function (time) {
-      return new Promise((a, r) => {
-        setTimeout(() => a(), time);
-      });
-    };
-
-    // Upload "data" to your server
-    // Use XMLHttpRequest.send to send a FormData object containing
-    // "data"
-    // Check this question: https://stackoverflow.com/questions/18055422/how-to-receive-php-image-data-over-copy-n-paste-javascript-with-xmlhttprequest
-
-    await wait(2000);
-
-    // yields the URL that should be inserted in the markdown
-    yield "https://picsum.photos/300";
-    await wait(2000);
-
-    // returns true meaning that the save was successful
-    return true;
   };
 
   const handleChange = (e) => {
@@ -66,10 +76,28 @@ function NewPost() {
     localStorage.setItem("post-content", JSON.stringify(e));
   };
 
+  // state
+  const [title, setTitle] = useState(savedTitle());
+  const [content, setContent] = useState(savedContent());
+  const [selectedTab, setSelectedTab] = useState("write");
+  const [categories, setCategories] = useState([]);
+  const [loadedCategories, setLoadedCategories] = useState([]);
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const editorOptions = useMemo(() => {
+    return {
+      hideIcons: ["fullscreen", "side-by-side"],
+      spellChecker: false,
+    };
+  }, []);
+
   return (
     <AdminLayout>
       <Row>
-        <Col sm={12}>
+        <Col span={14} offset={1}>
           <h1>Create a new post</h1>
           <Input
             style={{ margin: "10px 0 10px 0" }}
@@ -78,24 +106,26 @@ function NewPost() {
             size="large"
             onChange={handleChange}
           />
-          <ReactMde
+          <SimpleMDE
             value={content}
             onChange={handleEditorChange}
-            selectedTab={selectedTab}
-            onTabChange={setSelectedTab}
-            generateMarkdownPreview={(markdown) =>
-              Promise.resolve(converter.makeHtml(markdown))
-            }
-            childProps={{
-              writeButton: {
-                tabIndex: -1,
-              },
-            }}
-            paste={{
-              saveImage: save,
-            }}
+            options={editorOptions}
           />
           <p>{JSON.stringify(content, null, 4)}</p>
+        </Col>
+        <Col span={6} offset={1}>
+          <h4>Categories</h4>
+          <Select
+            style={{ width: "100%", color: "red" }}
+            mode="multiple"
+            allowClear={true}
+            placeholder="Select categories"
+            onChange={(e) => setCategories(e)}
+          >
+            {loadedCategories?.map((item) => (
+              <Option key={item.name}>{item.name}</Option>
+            ))}
+          </Select>
         </Col>
       </Row>
     </AdminLayout>
