@@ -1,12 +1,18 @@
 import AdminLayout from "../../../src/components/layout/AdminLayout";
-import { useEffect, useMemo, useState } from "react";
-import { Col, Input, Row, Select } from "antd";
+import { useEffect, useState } from "react";
+import { Button, Col, Input, Row, Select } from "antd";
 import axios from "axios";
 import Resizer from "react-image-file-resizer";
-import SimpleMDE from "react-simplemde-editor";
-import "easymde/dist/easymde.min.css";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import dynamic from "next/dynamic";
+import rehypeSanitize from "rehype-sanitize";
+import { toast } from "react-hot-toast";
+//import { commands } from "@uiw/react-md-editor";
 
 const { Option } = Select;
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 const resizeFile = (file) =>
   new Promise((resolve) => {
@@ -29,7 +35,6 @@ const uploadImage = async (file) => {
   try {
     const image = await resizeFile(file);
     console.log("Image Base64 => ", image);
-    return;
     const { data } = await axios.post("/upload-image", { image });
     console.log("Upload file Response => ", data);
     return data.url;
@@ -46,6 +51,7 @@ function NewPost() {
       setLoadedCategories(data);
     } catch (err) {
       console.log(err);
+      toast.error("Post create failed. Try again");
     }
   };
 
@@ -76,22 +82,40 @@ function NewPost() {
     localStorage.setItem("post-content", JSON.stringify(e));
   };
 
+  const handlePublish = async () => {
+    try {
+      const { data } = await axios.post("/create-post", {
+        title,
+        content,
+        categories,
+      });
+
+      if (data?.error) {
+        toast.error(data?.error);
+      } else {
+        toast.success("Post created successfully");
+        console.log("POST PUBLISHED RES => ", data);
+        setTitle("");
+        setContent("");
+        setCategories([]);
+        localStorage.removeItem("post-title");
+        localStorage.removeItem("post-content");
+      }
+    } catch (err) {
+      console.log(err);
+      toast;
+    }
+  };
+
   // state
   const [title, setTitle] = useState(savedTitle());
   const [content, setContent] = useState(savedContent());
-  const [selectedTab, setSelectedTab] = useState("write");
   const [categories, setCategories] = useState([]);
   const [loadedCategories, setLoadedCategories] = useState([]);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     loadCategories();
-  }, []);
-
-  const editorOptions = useMemo(() => {
-    return {
-      hideIcons: ["fullscreen", "side-by-side"],
-      spellChecker: false,
-    };
   }, []);
 
   return (
@@ -106,17 +130,27 @@ function NewPost() {
             size="large"
             onChange={handleChange}
           />
-          <SimpleMDE
+
+          <MDEditor
+            data-color-mode="dark"
             value={content}
             onChange={handleEditorChange}
-            options={editorOptions}
+            height={500}
+            preview="edit"
+            previewOptions={{
+              rehypePlugins: [[rehypeSanitize]],
+            }}
           />
-          <p>{JSON.stringify(content, null, 4)}</p>
+          {/* <p>localStorage content = {JSON.stringify(content, null, 4)}</p> */}
         </Col>
         <Col span={6} offset={1}>
-          <h4>Categories</h4>
+          <h1>Categories</h1>
           <Select
-            style={{ width: "100%", color: "red" }}
+            style={{
+              margin: "10px 0 10px 0",
+              width: "100%",
+            }}
+            size="large"
             mode="multiple"
             allowClear={true}
             placeholder="Select categories"
@@ -126,6 +160,13 @@ function NewPost() {
               <Option key={item.name}>{item.name}</Option>
             ))}
           </Select>
+          <Button
+            style={{ width: "100%" }}
+            type="primary"
+            onClick={handlePublish}
+          >
+            Publish
+          </Button>
         </Col>
       </Row>
     </AdminLayout>

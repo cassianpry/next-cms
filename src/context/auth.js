@@ -15,11 +15,17 @@ const AuthProvider = ({ children }) => {
     axios.defaults.headers.post["Content-Type"] =
       "application/x-www-form-urlencoded";
     axios.defaults.headers.common["Authorization"] = `Bearer ${auth.token}`;
+    axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
+    axios.defaults.headers.common["Access-Control-Allow-Headers"] =
+      "Origin, X-Requested-With, Content-Type, Accept";
   } else {
     axios.defaults.baseURL = process.env.NEXT_PUBLIC_API;
     axios.defaults.headers.post["Content-Type"] =
       "application/x-www-form-urlencoded";
     axios.defaults.headers.common["Authorization"] = `Bearer ${auth.token}`;
+    axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
+    axios.defaults.headers.common["Access-Control-Allow-Headers"] =
+      "Origin, X-Requested-With, Content-Type, Accept";
   }
 
   useEffect(() => {
