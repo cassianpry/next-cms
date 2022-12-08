@@ -128,9 +128,7 @@ export default function Signin() {
                 Don't have an account?
               </span>
 
-              <Link style={{}} href="/signup">
-                Register now!
-              </Link>
+              <Link href="/signup">Register now!</Link>
             </div>
             <div
               style={{

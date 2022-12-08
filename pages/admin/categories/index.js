@@ -1,15 +1,17 @@
 import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, List, Modal, Row } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import AdminLayout from "../../../src/components/layout/AdminLayout";
 import CategoryUpdateModal from "../../../src/components/modal/CategoryUpdateModal";
+import { PostContext } from "../../../src/context/post";
 
 export default function Categories() {
+  // context
+  const [post, setPost] = useContext(PostContext);
   // state
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
   // update state
   const [updatingCategory, setUpdatingCategory] = useState({});
   const [open, setOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function Categories() {
   const getCategories = async () => {
     try {
       const { data } = await axios.get("/categories");
-      setCategories(data);
+      setPost((prev) => ({ ...prev, categories: data }));
     } catch (err) {}
   };
   const onFinish = async (values) => {
@@ -34,7 +36,11 @@ export default function Categories() {
         `${process.env.NEXT_PUBLIC_API}/category`,
         values
       );
-      setCategories([...categories, data]);
+      // local state setCategories
+      // setCategories([...categories, data]);
+
+      // global state categories
+      setPost((prev) => ({ ...prev, categories: [data, ...categories] }));
       if (data?.error) {
         setLoading(false);
         toast.error(data.error);
@@ -50,22 +56,6 @@ export default function Categories() {
     }
   };
 
-  const handleDelete = async (item) => {
-    try {
-      const { data } = await axios.delete(`/category/${item.slug}`);
-      setCategories(categories.filter((cat) => cat._id !== data._id));
-      toast.success("Category deleted successfully.");
-    } catch (err) {
-      console.log(err);
-      toast.error("Delete operation failed. Try again");
-    }
-  };
-
-  const handleEdit = async (item) => {
-    setUpdatingCategory(item);
-    setOpen(true);
-  };
-
   const handleUpdate = async (values) => {
     try {
       const { data } = await axios.put(
@@ -78,7 +68,8 @@ export default function Categories() {
         }
         return cat;
       });
-      setCategories(newCategories);
+      //setCategories(newCategories);
+      setPost((prev) => ({ ...prev, categories: newCategories }));
       toast.success("Category updated successfully");
       setOpen(false);
       setUpdatingCategory({});
@@ -88,6 +79,28 @@ export default function Categories() {
       toast.error("Update operation failed. Try again");
     }
   };
+
+  const handleDelete = async (item) => {
+    try {
+      const { data } = await axios.delete(`/category/${item.slug}`);
+      //setCategories(categories.filter((cat) => cat._id !== data._id));
+      setPost((prev) => ({
+        ...prev,
+        categories: categories.filter((cat) => cat._id !== data._id),
+      }));
+      toast.success("Category deleted successfully.");
+    } catch (err) {
+      console.log(err);
+      toast.error("Delete operation failed. Try again");
+    }
+  };
+
+  const handleEdit = async (item) => {
+    setUpdatingCategory(item);
+    setOpen(true);
+  };
+
+  const { categories } = post;
 
   return (
     <AdminLayout>
@@ -139,22 +152,11 @@ export default function Categories() {
               renderItem={(item) => (
                 <List.Item
                   actions={[
-                    <p style={{ color: "rgba(255, 255, 255, 0.65)" }}>
-                      <a onClick={() => handleEdit(item)}>edit</a>
-                    </p>,
-                    <p style={{ color: "rgba(255, 255, 255, 0.65)" }}>|</p>,
-                    <p style={{ color: "rgba(255, 255, 255, 0.65)" }}>
-                      <a onClick={() => handleDelete(item)}>delete</a>
-                    </p>,
+                    <a onClick={() => handleEdit(item)}>edit</a>,
+                    <a onClick={() => handleDelete(item)}>delete</a>,
                   ]}
                 >
-                  <List.Item.Meta
-                    title={
-                      <p style={{ color: "rgba(255, 255, 255, 0.65)" }}>
-                        {item.name}
-                      </p>
-                    }
-                  />
+                  <List.Item.Meta title={item.name} />
                 </List.Item>
               )}
             ></List>
