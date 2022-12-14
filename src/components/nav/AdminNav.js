@@ -111,7 +111,7 @@ const AdminNav = () => {
           mode="inline"
           items={items}
           onClick={onClick}
-          inlineCollapsed={collapsed}
+          //collapsed={collapsed}
           theme="dark"
         />
       </div>

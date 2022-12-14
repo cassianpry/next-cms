@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import NavBar from "../src/components/NavBar";
 import { AuthProvider } from "../src/context/auth";
 import { PostProvider } from "../src/context/post";
+import { MediaProvider } from "../src/context/media";
 import "../src/styles/global.css";
 
 const { Footer } = Layout;
@@ -12,9 +13,11 @@ function MyApp({ Component, pageProps }) {
     <>
       <AuthProvider>
         <PostProvider>
-          <NavBar />
-          <Toaster />
-          <Component {...pageProps} />
+          <MediaProvider>
+            <NavBar />
+            <Toaster />
+            <Component {...pageProps} />
+          </MediaProvider>
         </PostProvider>
       </AuthProvider>
       <Footer

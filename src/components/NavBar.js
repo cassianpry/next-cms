@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import {
+  DatabaseOutlined,
   HomeOutlined,
   LoginOutlined,
   LogoutOutlined,
@@ -12,7 +13,7 @@ import { useRouter } from "next/router";
 import { AuthContext } from "../context/auth";
 import toast from "react-hot-toast";
 
-function getItem(label, key, icon, children, type) {
+const getItem = (label, key, icon, children, type) => {
   return {
     key,
     icon,
@@ -20,7 +21,7 @@ function getItem(label, key, icon, children, type) {
     label,
     type,
   };
-}
+};
 
 const NavBar = () => {
   //state
@@ -47,6 +48,11 @@ const NavBar = () => {
       label: "CMS",
       key: "/",
       icon: <HomeOutlined />,
+    },
+    {
+      label: "Posts",
+      key: "/posts",
+      icon: <DatabaseOutlined />,
     },
     auth?.user === null && {
       style: { marginLeft: "auto" },

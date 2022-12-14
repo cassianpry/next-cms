@@ -1,47 +1,54 @@
-import AdminLayout from "../../../src/components/layout/AdminLayout";
-import { useEffect, useState } from "react";
-import { Button, Col, Input, Row, Select } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { Button, Col, Image, Input, Modal, Row, Select } from "antd";
 import axios from "axios";
 import Resizer from "react-image-file-resizer";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import dynamic from "next/dynamic";
 import rehypeSanitize from "rehype-sanitize";
 import { toast } from "react-hot-toast";
+import { UploadOutlined } from "@ant-design/icons";
+import { ImageLibrary } from "../media";
+import AdminLayout from "../../../src/components/layout/AdminLayout";
+import { MediaContext } from "../../../src/context/media";
+
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
 //import { commands } from "@uiw/react-md-editor";
 
 const { Option } = Select;
 
-const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+const MDEditor = dynamic(
+  () => import("@uiw/react-md-editor").then((mod) => mod.default),
+  { ssr: false }
+);
 
-const resizeFile = (file) =>
-  new Promise((resolve) => {
-    Resizer.imageFileResizer(
-      file,
-      720,
-      400,
-      "JPEG",
-      100,
-      0,
-      (uri) => {
-        resolve(uri);
-      },
-      "base64"
-    );
-  });
+// const resizeFile = (file) =>
+//   new Promise((resolve) => {
+//     Resizer.imageFileResizer(
+//       file,
+//       720,
+//       400,
+//       "JPEG",
+//       100,
+//       0,
+//       (uri) => {
+//         resolve(uri);
+//       },
+//       "base64"
+//     );
+//   });
 
-const uploadImage = async (file) => {
-  console.log("uploadImageData...");
-  try {
-    const image = await resizeFile(file);
-    console.log("Image Base64 => ", image);
-    const { data } = await axios.post("/upload-image", { image });
-    console.log("Upload file Response => ", data);
-    return data.url;
-  } catch (err) {
-    console.log(err);
-  }
-};
+// const uploadImage = async (file) => {
+//   console.log("uploadImageData...");
+//   try {
+//     const image = await resizeFile(file);
+//     console.log("Image Base64 => ", image);
+//     const { data } = await axios.post("/upload-image", { image });
+//     console.log("Upload file Response => ", data);
+//     return data.url;
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
 function NewPost() {
   // load categories from database
@@ -88,18 +95,20 @@ function NewPost() {
         title,
         content,
         categories,
+        featuredImage: media?.selected?._id,
       });
 
       if (data?.error) {
         toast.error(data?.error);
       } else {
-        toast.success("Post created successfully");
         console.log("POST PUBLISHED RES => ", data);
         setTitle("");
         setContent("");
         setCategories([]);
+        setMedia({ ...media, selected: "" });
         localStorage.removeItem("post-title");
         localStorage.removeItem("post-content");
+        toast.success("Post created successfully");
       }
     } catch (err) {
       console.log(err);
@@ -107,12 +116,16 @@ function NewPost() {
     }
   };
 
+  //context
+  const [media, setMedia] = useContext(MediaContext);
+
   // state
   const [title, setTitle] = useState(savedTitle());
   const [content, setContent] = useState(savedContent());
   const [categories, setCategories] = useState([]);
   const [loadedCategories, setLoadedCategories] = useState([]);
-  const [visible, setVisible] = useState(false);
+  //const [visible, setVisible] = useState(false);
+  // const [visibleMedia, setVisibleMedia] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -160,14 +173,42 @@ function NewPost() {
               <Option key={item.name}>{item.name}</Option>
             ))}
           </Select>
+          {media?.selected && (
+            <Image
+              style={{ margin: "10px 0 10px 0", borderRadius: "5px" }}
+              width="100%"
+              src={media?.selected?.url}
+              alt="image post"
+            />
+          )}
+
           <Button
+            className="button-transparent"
             style={{ width: "100%" }}
+            onClick={() => setMedia({ ...media, showMediaModal: true })}
+          >
+            <UploadOutlined />
+            Upload image
+          </Button>
+          <Button
+            style={{ width: "100%", marginTop: "10px" }}
             type="primary"
             onClick={handlePublish}
           >
             Publish
           </Button>
         </Col>
+        <Modal
+          className="modalStyle"
+          open={media.showMediaModal}
+          title="Media"
+          width={720}
+          footer={null}
+          onOk={() => setMedia({ ...media, showMediaModal: false })}
+          onCancel={() => setMedia({ ...media, showMediaModal: false })}
+        >
+          <ImageLibrary />
+        </Modal>
       </Row>
     </AdminLayout>
   );

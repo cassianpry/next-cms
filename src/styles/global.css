@@ -213,13 +213,6 @@ legend {
   white-space: normal;
 }
 
-.modalStyle .ant-modal-header,
-.modalStyle .ant-modal-content,
-.modalStyle .ant-modal-body {
-  color: rgba(255, 255, 255, 0.65);
-  background-color: rgb(30, 30, 30);
-}
-
 progress {
   vertical-align: baseline;
 }
@@ -260,6 +253,20 @@ span {
   color: #ffffffa6;
 }
 
+.modalStyle .ant-modal-content {
+  background-color: rgb(30, 30, 30);
+  color: rgba(255, 255, 255, 0.65);
+}
+.modalStyle .ant-modal-title {
+  background-color: rgb(30, 30, 30);
+  color: rgba(255, 255, 255, 0.65);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ant-btn-primary > span {
+  color: rgb(255, 255, 255) !important;
+}
+
 .button-transparent {
   background-color: transparent;
   color: #4096ff;
@@ -273,15 +280,111 @@ span {
   border-block-end: 1px solid rgba(107, 107, 107, 0.288) !important;
 }
 
-.ant-list-item-meta-title {
+.ant-list-item-meta-title,
+.ant-upload-list-item-name {
   color: rgba(255, 255, 255, 0.904) !important;
   font-weight: normal;
 }
 
 .ant-list-item-action-split {
-  background-color: rgb(255 255 255 / 20%) !important;
+  background-color: rgba(255 255 255 / 20%) !important;
 }
 
-.anticon-edit {
-  color: rgba(0, 0, 0, 0.651);
+.ant-select-selection-item-content {
+  color: #4096ff !important;
+}
+
+.ant-upload-list-item-action {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.ant-upload-list-item-actions {
+  display: none;
+}
+
+.anticon-paper-clip {
+  color: white !important;
+}
+
+.tabs-text {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.ant-upload-text,
+.ant-upload-hint {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.anticon-spin {
+  color: rgb(30, 255, 0) !important;
+}
+
+.ant-image-preview-img {
+  border-radius: 5px;
+}
+
+.media-dragndrop-library {
+  display: flex;
+
+  justify-content: center;
+  margin: 2px;
+}
+
+.media-image-card {
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  transition: all 0.2s;
+}
+
+.media-library-div {
+  padding-top: 10px;
+  padding-right: 10px;
+}
+
+.media-image {
+  height: 100px !important;
+  width: 100px !important;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 0.1rem solid;
+  border-color: #222222;
+  opacity: 0.7;
+}
+
+.media-image-card:hover {
+  transform: scale(1.01);
+}
+
+.media-image-card,
+.media-image:hover {
+  border-color: #4096ff;
+  opacity: 1;
+}
+
+.media-image-delete-icon {
+  margin: 5px;
+  color: rgb(255, 0, 0);
+  opacity: 0.5;
+}
+
+.media-image-delete-icon:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.ant-card {
+  border-color: rgba(255, 255, 255, 0.199);
+  background-color: rgba(255, 255, 255, 0.199);
+}
+
+.ant-card-meta-title {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.image-card {
+  height: 200px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
