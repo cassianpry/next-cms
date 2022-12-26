@@ -1,18 +1,17 @@
 import { useContext, useEffect, useState } from 'react'
 import { Button, Col, Image, Input, Modal, Row, Select } from 'antd'
 import axios from 'axios'
-import Resizer from 'react-image-file-resizer'
 import dynamic from 'next/dynamic'
 import rehypeSanitize from 'rehype-sanitize'
 import { toast } from 'react-hot-toast'
-import { UploadOutlined } from '@ant-design/icons'
+import { LoadingOutlined, UploadOutlined } from '@ant-design/icons'
 import { ImageLibrary } from '../media'
 import AdminLayout from '../../../src/components/layout/AdminLayout'
 import { MediaContext } from '../../../src/context/media'
 
 import '@uiw/react-md-editor/markdown-editor.css'
 import '@uiw/react-markdown-preview/markdown.css'
-//import { commands } from "@uiw/react-md-editor";
+import { useRouter } from 'next/router'
 
 const { Option } = Select
 
@@ -21,36 +20,50 @@ const MDEditor = dynamic(
   { ssr: false }
 )
 
-// const resizeFile = (file) =>
-//   new Promise((resolve) => {
-//     Resizer.imageFileResizer(
-//       file,
-//       720,
-//       400,
-//       "JPEG",
-//       100,
-//       0,
-//       (uri) => {
-//         resolve(uri);
-//       },
-//       "base64"
-//     );
-//   });
+function EditPost() {
+  const router = useRouter()
 
-// const uploadImage = async (file) => {
-//   console.log("uploadImageData...");
-//   try {
-//     const image = await resizeFile(file);
-//     console.log("Image Base64 => ", image);
-//     const { data } = await axios.post("/upload-image", { image });
-//     console.log("Upload file Response => ", data);
-//     return data.url;
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+  //context
+  const [media, setMedia] = useContext(MediaContext)
 
-function NewPost() {
+  // state
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [categories, setCategories] = useState([]) //post's existing categories
+  const [loadedCategories, setLoadedCategories] = useState([])
+  const [featuredImage, setFeaturedImage] = useState({})
+  const [postId, setPostId] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [btnLoading, setBtnLoading] = useState(false)
+
+  useEffect(() => {
+    loadCategories()
+  }, [])
+
+  useEffect(() => {
+    loadPost()
+  }, [router?.query?.slug])
+
+  // load post from database
+  const loadPost = async () => {
+    try {
+      const { data } = await axios.get(`/post/${router.query.slug}`)
+      console.log('Got post for edit', data.post)
+      // push categories names
+      let cat = []
+      data.post.categories.map((c) => cat.push(c.name))
+      console.log(cat)
+      setCategories(cat)
+      setTitle(data.post.title)
+      setContent(data.post.content)
+      setFeaturedImage(data.post.featuredImage)
+      setPostId(data.post._id)
+      setLoading(false)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   // load categories from database
   const loadCategories = async () => {
     try {
@@ -59,23 +72,6 @@ function NewPost() {
     } catch (err) {
       console.log(err)
       toast.error('Post create failed. Try again')
-    }
-  }
-
-  // load from localStorage
-  const savedTitle = () => {
-    if (typeof window === 'object') {
-      if (localStorage.getItem('post-title')) {
-        return JSON.parse(localStorage.getItem('post-title'))
-      }
-    }
-  }
-
-  const savedContent = () => {
-    if (typeof window === 'object') {
-      if (localStorage.getItem('post-content')) {
-        return JSON.parse(localStorage.getItem('post-content'))
-      }
     }
   }
 
@@ -92,11 +88,15 @@ function NewPost() {
   const handlePublish = async () => {
     try {
       setBtnLoading(true)
-      const { data } = await axios.post('/create-post', {
+      const { data } = await axios.put(`/edit-post/${postId}`, {
         title,
         content,
         categories,
-        featuredImage: media?.selected?._id,
+        featuredImage: media?.selected?._id
+          ? media?.selected?._id
+          : featuredImage?._id
+          ? featuredImage._id
+          : undefined,
       })
 
       if (data?.error) {
@@ -107,10 +107,9 @@ function NewPost() {
         setContent('')
         setCategories([])
         setMedia({ ...media, selected: null })
-        localStorage.removeItem('post-title')
-        localStorage.removeItem('post-content')
         setBtnLoading(false)
         toast.success('Post created successfully')
+        router.push('/admin/posts')
       }
     } catch (err) {
       console.log(err)
@@ -118,27 +117,11 @@ function NewPost() {
     }
   }
 
-  //context
-  const [media, setMedia] = useContext(MediaContext)
-
-  // state
-  const [title, setTitle] = useState(savedTitle())
-  const [content, setContent] = useState(savedContent())
-  const [categories, setCategories] = useState([])
-  const [loadedCategories, setLoadedCategories] = useState([])
-  const [btnLoading, setBtnLoading] = useState(false)
-  //const [visible, setVisible] = useState(false);
-  // const [visibleMedia, setVisibleMedia] = useState(false);
-
-  useEffect(() => {
-    loadCategories()
-  }, [])
-
   return (
     <AdminLayout>
       <Row>
         <Col span={14} offset={1}>
-          <h1>Create a new post</h1>
+          <h1>Update an existing post</h1>
           <Input
             style={{ margin: '10px 0 10px 0' }}
             value={title}
@@ -146,17 +129,32 @@ function NewPost() {
             size="large"
             onChange={handleChange}
           />
+          {loading ? (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 500,
+              }}
+            >
+              <p>
+                <LoadingOutlined style={{ fontSize: '50px' }} />
+              </p>
+            </div>
+          ) : (
+            <MDEditor
+              data-color-mode="dark"
+              value={content}
+              onChange={handleEditorChange}
+              height={500}
+              preview="edit"
+              previewOptions={{
+                rehypePlugins: [[rehypeSanitize]],
+              }}
+            />
+          )}
 
-          <MDEditor
-            data-color-mode="dark"
-            value={content}
-            onChange={handleEditorChange}
-            height={500}
-            preview="edit"
-            previewOptions={{
-              rehypePlugins: [[rehypeSanitize]],
-            }}
-          />
           {/* <p>localStorage content = {JSON.stringify(content, null, 4)}</p> */}
         </Col>
         <Col span={6} offset={1}>
@@ -177,13 +175,22 @@ function NewPost() {
               <Option key={item.name}>{item.name}</Option>
             ))}
           </Select>
-          {media?.selected && (
+          {media?.selected ? (
             <Image
               style={{ margin: '10px 0 10px 0', borderRadius: '5px' }}
               width="100%"
               src={media?.selected?.url}
               alt="image post"
             />
+          ) : featuredImage?.url ? (
+            <Image
+              style={{ margin: '10px 0 10px 0', borderRadius: '5px' }}
+              width="100%"
+              src={featuredImage?.url}
+              alt="image post"
+            />
+          ) : (
+            ''
           )}
 
           <Button
@@ -200,7 +207,7 @@ function NewPost() {
             type="primary"
             onClick={handlePublish}
           >
-            Publish
+            Update Post
           </Button>
         </Col>
         <Modal
@@ -218,4 +225,4 @@ function NewPost() {
     </AdminLayout>
   )
 }
-export default NewPost
+export default EditPost

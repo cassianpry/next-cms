@@ -1,21 +1,20 @@
-import { LoadingOutlined, SyncOutlined } from "@ant-design/icons";
-import { Layout } from "antd";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../context/auth";
-import AdminNav from "../nav/AdminNav";
+import { Layout } from 'antd'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../../context/auth'
+import AdminNav from '../nav/AdminNav'
 
-const { Content } = Layout;
+const { Content } = Layout
 
 export default function AdminLayout({ children }) {
   // state
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true)
   // context
-  const [auth, setAuth] = useContext(AuthContext);
+  const [auth, setAuth] = useContext(AuthContext)
 
   // router
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
     // if (auth?.user?.role !== "Admin") {
@@ -24,19 +23,19 @@ export default function AdminLayout({ children }) {
     // } else {
     //   setLoading(false);
     //}
-    if (auth?.token) getCurrentUser();
-  }, [auth?.token]);
+    if (auth?.token) getCurrentUser()
+  }, [auth?.token])
 
   const getCurrentUser = async () => {
     try {
-      const { data } = await axios.get("/current-admin");
-      setLoading(false);
+      const { data } = await axios.get('/current-admin')
+      setLoading(false)
       //console.log(data);
     } catch (err) {
-      console.log(err);
-      router.push("/");
+      console.log(err)
+      router.push('/')
     }
-  };
+  }
 
   return (
     <Layout theme="dark">
@@ -47,7 +46,7 @@ export default function AdminLayout({ children }) {
           <AdminNav />
           <Layout theme="dark">
             <Content
-              style={{ backgroundColor: "rgb(30, 30, 30)", padding: "10px" }}
+              style={{ backgroundColor: 'rgb(30, 30, 30)', padding: '10px' }}
             >
               {children}
             </Content>
@@ -55,5 +54,5 @@ export default function AdminLayout({ children }) {
         </>
       )}
     </Layout>
-  );
+  )
 }
