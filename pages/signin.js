@@ -1,68 +1,68 @@
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row } from "antd";
-import Link from "next/link";
-import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { AuthContext } from "../src/context/auth";
-import { useRouter } from "next/router";
+import { LockOutlined, MailOutlined } from '@ant-design/icons'
+import { Button, Col, Form, Input, Row } from 'antd'
+import Link from 'next/link'
+import axios from 'axios'
+import { useContext, useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
+import { AuthContext } from '../src/context/auth'
+import { useRouter } from 'next/router'
 
 export default function Signin() {
   //context
-  const [auth, setAuth] = useContext(AuthContext);
+  const [auth, setAuth] = useContext(AuthContext)
   //state
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   //hooks
-  const router = useRouter();
-  const [form] = Form.useForm();
+  const router = useRouter()
+  const [form] = Form.useForm()
 
   useEffect(() => {
     if (auth?.token) {
-      router.push("/");
+      router.push('/')
     }
-  }, [auth]);
+  }, [auth])
 
   const onFinish = async (values) => {
-    console.log("Received values of form: ", values);
+    console.log('Received values of form: ', values)
     try {
-      setLoading(true);
+      setLoading(true)
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API}/signin`,
         values
-      );
+      )
       if (data?.error) {
-        setLoading(false);
-        toast.error(data.error);
+        setLoading(false)
+        toast.error(data.error)
       } else {
-        console.log("res=>", data);
+        console.log('res=>', data)
         //save in context
-        setAuth(data);
+        setAuth(data)
         //save in localStorage
-        localStorage.setItem("auth", JSON.stringify(data));
-        toast.success("Login successfully!");
-        setLoading(false);
-        form.resetFields();
+        localStorage.setItem('auth', JSON.stringify(data))
+        toast.success('Login successfully!')
+        setLoading(false)
+        form.resetFields()
 
         //redirect
-        if (data?.user?.role === "Admin") {
-          router.push("/admin");
-        } else if (data?.user?.role === "Author") {
-          router.push("/author");
+        if (data?.user?.role === 'Admin') {
+          router.push('/admin')
+        } else if (data?.user?.role === 'Author') {
+          router.push('/author')
         } else {
-          router.push("/subiscriber");
+          router.push('/subscriber')
         }
       }
     } catch (err) {
-      setLoading(false);
-      toast.error("Signup failed. Try again.");
-      console.log("err=>", err);
+      setLoading(false)
+      toast.error('Signip failed. Try again.')
+      console.log('err=>', err)
     }
-  };
+  }
 
   return (
     <Row>
       <Col span={8} offset={8}>
-        <h1 style={{ paddingTop: "100px" }}>Sign In</h1>
+        <h1 style={{ paddingTop: '100px' }}>Sign In</h1>
         <Form
           form={form}
           name="normal_login"
@@ -76,13 +76,13 @@ export default function Signin() {
             rules={[
               {
                 required: true,
-                message: "Please input a valid e-mail!",
-                type: "email",
+                message: 'Please input a valid e-mail!',
+                type: 'email',
               },
             ]}
           >
             <Input
-              prefix={<MailOutlined style={{ color: "black" }} />}
+              prefix={<MailOutlined style={{ color: 'black' }} />}
               placeholder="email@example.com"
             />
           </Form.Item>
@@ -92,12 +92,12 @@ export default function Signin() {
             rules={[
               {
                 required: true,
-                message: "Please input your Password!",
+                message: 'Please input your Password!',
               },
             ]}
           >
             <Input.Password
-              prefix={<LockOutlined style={{ color: "black" }} />}
+              prefix={<LockOutlined style={{ color: 'black' }} />}
               type="password"
               placeholder="Password"
             />
@@ -106,8 +106,8 @@ export default function Signin() {
           <Form.Item>
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
+                display: 'flex',
+                alignItems: 'center',
               }}
             >
               <Button
@@ -121,8 +121,8 @@ export default function Signin() {
               </Button>
               <span
                 style={{
-                  paddingRight: "5px",
-                  marginLeft: "auto",
+                  paddingRight: '5px',
+                  marginLeft: 'auto',
                 }}
               >
                 Don't have an account?
@@ -132,12 +132,12 @@ export default function Signin() {
             </div>
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                marginTop: "20px",
+                display: 'flex',
+                alignItems: 'center',
+                marginTop: '20px',
               }}
             >
-              <Link style={{ marginLeft: "auto" }} href="/forgot-password">
+              <Link style={{ marginLeft: 'auto' }} href="/forgot-password">
                 Forgot password?
               </Link>
             </div>
@@ -145,5 +145,5 @@ export default function Signin() {
         </Form>
       </Col>
     </Row>
-  );
+  )
 }

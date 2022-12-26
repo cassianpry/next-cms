@@ -1,63 +1,63 @@
-import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row } from "antd";
-import Link from "next/link";
-import axios from "axios";
-import toast from "react-hot-toast";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../src/context/auth";
-import { useRouter } from "next/router";
+import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Col, Form, Input, Row } from 'antd'
+import Link from 'next/link'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../src/context/auth'
+import { useRouter } from 'next/router'
 
 const Signup = () => {
   //context
-  const [auth, setAuth] = useContext(AuthContext);
+  const [auth, setAuth] = useContext(AuthContext)
 
   //hook
-  const router = useRouter();
+  const router = useRouter()
 
   //State
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (auth?.token) {
-      router.push("/");
+      router.push('/')
     }
-  }, [auth]);
+  }, [auth])
 
   //process.env.NEXT_PUBLIC_API
   const onFinish = async (values) => {
-    console.log("Received values of form: ", values);
-    setLoading(true);
+    console.log('Received values of form: ', values)
+    setLoading(true)
 
     try {
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API}/signup`,
         values
-      );
+      )
       if (data?.error) {
-        setLoading(false);
-        toast.error(data.error);
+        setLoading(false)
+        toast.error(data.error)
       } else {
-        console.log("res=>", data);
+        console.log('res=>', data)
         //save in context
-        setAuth(data);
+        setAuth(data)
         //save in localStorage
-        localStorage.setItem("auth", JSON.stringify(data));
-        toast.success("Successfully signed up");
-        setLoading(false);
+        localStorage.setItem('auth', JSON.stringify(data))
+        toast.success('Successfully signed up')
+        setLoading(false)
         //redirect
-        router.push("/signin");
+        router.push('/signin')
       }
     } catch (err) {
-      setLoading(false);
-      toast.error("Signup failed. Try again.");
-      console.log(err);
+      toast.error('Signup failed. Try again.')
+      console.log(err)
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <Row>
       <Col span={8} offset={8}>
-        <h1 style={{ paddingTop: "100px", textAlign: "center" }}>Sign up</h1>
+        <h1 style={{ paddingTop: '100px', textAlign: 'center' }}>Sign up</h1>
         <Form
           name="normal_login"
           initialValues={{
@@ -66,67 +66,67 @@ const Signup = () => {
           onFinish={onFinish}
         >
           <Form.Item
-            style={{ paddingBottom: "5px" }}
+            style={{ paddingBottom: '5px' }}
             name="name"
             rules={[
               {
                 required: true,
-                message: "Please input your Name!",
+                message: 'Please input your Name!',
               },
             ]}
           >
             <Input
-              prefix={<UserOutlined style={{ color: "black" }} />}
+              prefix={<UserOutlined style={{ color: 'black' }} />}
               placeholder="Your Name"
             />
           </Form.Item>
 
           <Form.Item
-            style={{ paddingBottom: "5px" }}
+            style={{ paddingBottom: '5px' }}
             name="email"
             rules={[
               {
                 required: true,
-                message: "Please input a valid e-mail!",
-                type: "email",
+                message: 'Please input a valid e-mail!',
+                type: 'email',
               },
             ]}
           >
             <Input
-              prefix={<MailOutlined style={{ color: "black" }} />}
+              prefix={<MailOutlined style={{ color: 'black' }} />}
               placeholder="email@example.com"
             />
           </Form.Item>
 
           <Form.Item
-            style={{ paddingBottom: "5px" }}
+            style={{ paddingBottom: '5px' }}
             name="password"
             rules={[
               {
                 required: true,
-                message: "Please input your Password!",
+                message: 'Please input your Password!',
               },
             ]}
           >
             <Input.Password
-              prefix={<LockOutlined style={{ color: "black" }} />}
+              prefix={<LockOutlined style={{ color: 'black' }} />}
               type="password"
               placeholder="Password"
             />
           </Form.Item>
 
           <Form.Item
-            style={{ paddingBottom: "5px" }}
+            style={{ paddingBottom: '5px' }}
             name="confirmpassword"
             rules={[
               {
                 required: true,
-                message: "Please confirm your Password!",
+                message: 'Please confirm your Password!',
               },
             ]}
           >
             <Input.Password
-              prefix={<LockOutlined style={{ color: "black" }} />}
+              prefix={<LockOutlined style={{ color: 'black' }} />}
               type="password"
               placeholder="Confirm Password"
             />
@@ -135,8 +135,8 @@ const Signup = () => {
           <Form.Item>
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
+                display: 'flex',
+                alignItems: 'center',
               }}
             >
               <Button
@@ -151,9 +151,9 @@ const Signup = () => {
 
               <span
                 style={{
-                  paddingLeft: "5px",
-                  paddingRight: "5px",
-                  marginLeft: "auto",
+                  paddingLeft: '5px',
+                  paddingRight: '5px',
+                  marginLeft: 'auto',
                 }}
               >
                 Or
@@ -161,7 +161,7 @@ const Signup = () => {
 
               <Link
                 style={{
-                  marginLeft: "auto",
+                  marginLeft: 'auto',
                 }}
                 href="/signin"
               >
@@ -172,7 +172,7 @@ const Signup = () => {
         </Form>
       </Col>
     </Row>
-  );
-};
+  )
+}
 
-export default Signup;
+export default Signup

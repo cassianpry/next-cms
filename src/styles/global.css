@@ -399,3 +399,7 @@ span {
 .post-list-item:hover {
   background-color: rgba(255, 255, 255, 0.048);
 }
+
+.ant-select-selection-item {
+  color: black;
+}
