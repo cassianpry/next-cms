@@ -4,11 +4,11 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../context/auth'
-import AdminNav from '../nav/AdminNav'
+import AuthorNav from '../nav/AuthorNav'
 
 const { Content } = Layout
 
-export default function AdminLayout({ children }) {
+export default function AuthorLayout({ children }) {
   // state
   const [loading, setLoading] = useState(true)
   // context
@@ -29,7 +29,7 @@ export default function AdminLayout({ children }) {
 
   const getCurrentUser = async () => {
     try {
-      const { data } = await axios.get('/current-admin')
+      const { data } = await axios.get('/current-author')
       setLoading(false)
       //console.log(data);
     } catch (err) {
@@ -55,7 +55,7 @@ export default function AdminLayout({ children }) {
         </div>
       ) : (
         <>
-          <AdminNav />
+          <AuthorNav />
           <Layout theme="dark">
             <Content
               style={{ backgroundColor: 'rgb(30, 30, 30)', padding: '10px' }}

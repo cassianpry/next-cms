@@ -1,10 +1,10 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Col, List, Row } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { Button, Col, Row } from 'antd'
 import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useContext, useEffect } from 'react'
-import AdminLayout from '../../../src/components/layout/AdminLayout'
+import AuthorLayout from '../../../src/components/layout/AuthorLayout'
 import PostList from '../../../src/components/posts/PostList'
 import { PostContext } from '../../../src/context/post'
 
@@ -14,8 +14,9 @@ const Posts = () => {
 
   const fetchPosts = async () => {
     try {
-      const { data } = await axios.get('/posts-for-admin')
+      const { data } = await axios.get('/posts-by-author')
       setPost((prev) => ({ ...prev, posts: data }))
+      console.log(post)
     } catch (err) {
       console.log(err)
     }
@@ -27,7 +28,7 @@ const Posts = () => {
 
   const handleEdit = async (post) => {
     //console.log('EDIT POST => ', post)
-    return router.push(`/admin/posts/${post.slug}`)
+    return router.push(`/author/posts/${post.slug}`)
   }
 
   const handleDelete = async (post) => {
@@ -49,10 +50,10 @@ const Posts = () => {
   }
 
   return (
-    <AdminLayout>
+    <AuthorLayout>
       <Row>
         <Col span={24}>
-          <Link href="/admin/posts/new">
+          <Link href="/author/posts/new">
             <Button
               type="primary"
               style={{ margin: '10px 0px 10px 0px' }}
@@ -69,7 +70,7 @@ const Posts = () => {
           />
         </Col>
       </Row>
-    </AdminLayout>
+    </AuthorLayout>
   )
 }
 

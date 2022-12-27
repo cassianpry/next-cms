@@ -3,15 +3,12 @@ import generator from 'generate-password'
 import { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Button, Checkbox, Col, Form, Input, Row, Select } from 'antd'
-import { AuthContext } from '../../../src/context/auth'
-import { useRouter } from 'next/router'
 import {
   DesktopOutlined,
   LockOutlined,
   MailOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import Link from 'next/link'
 import axios from 'axios'
 
 const NewUser = () => {
@@ -19,6 +16,7 @@ const NewUser = () => {
   // const [name, setName] = useState('')
   // const [email, setEmail] = useState('')
   // const [website, setWebsite] = useState('')
+  const [form] = Form.useForm()
   const [password, setPassword] = useState(
     generator.generate({
       length: 6,
@@ -44,9 +42,10 @@ const NewUser = () => {
       } else {
         toast.success('User created successfully.')
         setLoading(false)
+        form.resetFields()
       }
     } catch (err) {
-      toast.error('Signup failed. Try again.')
+      toast.error('Unable to create an user. Reload the page and try again.')
       console.log(err)
       setLoading(false)
     }
@@ -68,6 +67,7 @@ const NewUser = () => {
         <Col span={12} offset={6}>
           <h2 style={{ marginBottom: '-10px' }}>Add new user</h2>
           <Form
+            form={form}
             style={{ margin: '30px 0px 10px 0px' }}
             name="create_user"
             initialValues={{
@@ -177,10 +177,13 @@ const NewUser = () => {
               name="role"
               rules={[{ required: true, message: 'Please select a role.' }]}
             >
-              <Select initialValues="Subscriber">
-                <Select.Option value="Subscriber">Subscriber</Select.Option>
-                <Select.Option value="Author">Author</Select.Option>
+              <Select
+                initialValues="Subscriber"
+                placeholder="Select an user role"
+              >
                 <Select.Option value="Admin">Admin</Select.Option>
+                <Select.Option value="Author">Author</Select.Option>
+                <Select.Option value="Subscriber">Subscriber</Select.Option>
               </Select>
             </Form.Item>
             <Form.Item name="checked" valuePropName="checked">

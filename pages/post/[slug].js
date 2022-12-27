@@ -1,4 +1,4 @@
-import { Col, Row, Card, Avatar, Typography } from 'antd'
+import { Col, Row, Card, Typography } from 'antd'
 import axios from 'axios'
 import Link from 'next/link'
 import Head from 'next/head'
@@ -6,7 +6,6 @@ import dayjs from 'dayjs'
 import dynamic from 'next/dynamic'
 import rehypeSanitize from 'rehype-sanitize'
 
-const { Meta } = Card
 const { Title } = Typography
 
 const MDEditor = dynamic(
@@ -47,7 +46,7 @@ export const SinglePost = ({ post }) => {
               data-color-mode="dark"
               value={post.content}
               preview="preview"
-              height={'100%'}
+              height="100%"
               hideToolbar
               visibleDragbar={false}
               previewOptions={{
