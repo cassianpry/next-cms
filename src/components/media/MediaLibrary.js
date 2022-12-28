@@ -1,10 +1,11 @@
-import { DeleteFilled, InboxOutlined } from '@ant-design/icons'
+import { DeleteFilled, InboxOutlined, LoadingOutlined } from '@ant-design/icons'
 import { Badge, Image, Upload } from 'antd'
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { AuthContext } from '../context/auth'
-import { MediaContext } from '../context/media'
+import { AuthContext } from '../../context/auth'
+import { MediaContext } from '../../context/media'
+import LoadingComponent from '../LoadingComponent'
 
 const { Dragger } = Upload
 
@@ -14,18 +15,32 @@ export const MediaLibrary = () => {
   const [media, setMedia] = useContext(MediaContext)
   //state
   const [showPreview, setShowPreview] = useState(false)
-  const [imageList, setImageList] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const fetchMedia = async () => {
-      try {
-        const { data } = await axios.get('/media')
-        setMedia((prev) => ({ ...prev, images: data }))
-      } catch (err) {
-        console.log(err)
+    const fetchMedia = async (id) => {
+      setLoading(true)
+      if (auth.user.role === 'Author') {
+        try {
+          const { data } = await axios.get(`/media/${id}`)
+          setMedia((prev) => ({ ...prev, images: data }))
+          setLoading(false)
+        } catch (err) {
+          console.log(err)
+          setLoading(false)
+        }
+      } else {
+        try {
+          const { data } = await axios.get(`/media`)
+          setMedia((prev) => ({ ...prev, images: data }))
+          setLoading(false)
+        } catch (err) {
+          console.log(err)
+          setLoading(false)
+        }
       }
     }
-    fetchMedia()
+    fetchMedia(auth.user._id)
   }, [])
 
   const props = {
@@ -92,24 +107,30 @@ export const MediaLibrary = () => {
         </p>
       </Dragger>
       <div>
-        {media?.images?.map((images) => (
-          <Badge key={images._id}>
-            <div className="media-image-card">
-              <div className="media-library-div">
-                <Image
-                  className="media-image"
-                  src={images.url}
-                  preview={showPreview}
-                  onClick={() => setMedia({ ...media, selected: images })}
-                />
-              </div>
-              <DeleteFilled
-                className="media-image-delete-icon"
-                onClick={() => handleImageDelete(images._id)}
-              />
-            </div>
-          </Badge>
-        ))}
+        {loading ? (
+          <LoadingComponent />
+        ) : (
+          <>
+            {media?.images?.map((images) => (
+              <Badge key={images._id}>
+                <div className="media-image-card">
+                  <div className="media-library-div">
+                    <Image
+                      className="media-image"
+                      src={images.url}
+                      preview={showPreview}
+                      onClick={() => setMedia({ ...media, selected: images })}
+                    />
+                  </div>
+                  <DeleteFilled
+                    className="media-image-delete-icon"
+                    onClick={() => handleImageDelete(images._id)}
+                  />
+                </div>
+              </Badge>
+            ))}
+          </>
+        )}
       </div>
     </div>
   )

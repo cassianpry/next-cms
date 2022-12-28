@@ -1,5 +1,5 @@
 import { Tabs } from 'antd'
-import { MediaLibrary } from '../MediaLibrary'
+import { MediaLibrary } from './MediaLibrary'
 import { UploadFile } from '../UploadFile'
 
 const ImageLibrary = () => {

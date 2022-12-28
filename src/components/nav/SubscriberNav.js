@@ -1,10 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
 import {
   BarChartOutlined,
-  CameraOutlined,
   CommentOutlined,
   LeftOutlined,
-  PushpinOutlined,
   RightOutlined,
   UserOutlined,
 } from '@ant-design/icons'
@@ -26,21 +24,11 @@ function getItem(label, key, icon, children, type, ...props) {
   }
 }
 const items = [
-  
-  getItem('Dashboard', '/author', <BarChartOutlined />),
-  getItem('Posts', 'sub1', <PushpinOutlined />, [
-    getItem('All Posts', '/author/posts'),
-    getItem('Add New', '/author/posts/new'),
-    getItem('Categories', '/author/categories'),
-  ]),
-  getItem('Media', 'sub2', <CameraOutlined />, [
-    getItem('Library', '/author/media'),
-    //getItem('Add New', '/admin/media/new'),
-  ]),
-  getItem('Comments', '/admin/comments', <CommentOutlined />),
-  getItem('Profile', '/author/users/userid', <UserOutlined />),
+  getItem('Dashboard', '/subscriber', <BarChartOutlined />),
+  getItem('Comments', '/subscriber/comments', <CommentOutlined />),
+  getItem('Profile', '/subscriber/profile', <UserOutlined />),
 ]
-const AuthorNav = () => {
+const SubscriberNav = () => {
   //state
   const [collapsed, setCollapsed] = useState(false)
   const [current, setCurrent] = useState('')
@@ -112,4 +100,4 @@ const AuthorNav = () => {
     </Sider>
   )
 }
-export default AuthorNav
+export default SubscriberNav
