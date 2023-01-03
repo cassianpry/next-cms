@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../context/auth'
 import AdminNav from '../nav/AdminNav'
+import LoadingComponent from '../LoadingComponent'
 
 const { Content } = Layout
 
@@ -33,6 +34,7 @@ export default function AdminLayout({ children }) {
       setLoading(false)
       //console.log(data);
     } catch (err) {
+      setLoading(false)
       console.log(err)
       router.push('/')
     }
@@ -41,18 +43,7 @@ export default function AdminLayout({ children }) {
   return (
     <Layout theme="dark">
       {loading ? (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: 500,
-          }}
-        >
-          <p>
-            <LoadingOutlined style={{ fontSize: '50px' }} />
-          </p>
-        </div>
+        <LoadingComponent />
       ) : (
         <>
           <AdminNav />

@@ -32,19 +32,20 @@ const Posts = () => {
 
   const handleDelete = async (post) => {
     //console.log("DELETE POST => ", post);
-    const answer = window.confirm('Are you sure you want to delete?')
-    if (answer) {
-      const { data } = await axios.delete(`/post/${post._id}`)
-      if (data.ok) {
-        setPost((prev) => ({
-          ...prev,
-          posts: prev.posts.filter((p) => p._id !== post._id),
-        }))
-      }
-    }
+
     try {
+      const answer = window.confirm('Are you sure you want to delete?')
+      if (answer) {
+        const { data } = await axios.delete(`/post/${post._id}`)
+        if (data.ok) {
+          setPost((prev) => ({
+            ...prev,
+            posts: prev.posts.filter((p) => p._id !== post._id)
+          }))
+        }
+      }
     } catch (err) {
-      //
+      console.log(err)
     }
   }
 

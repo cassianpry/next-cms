@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   BarChartOutlined,
   BgColorsOutlined,
@@ -8,12 +8,12 @@ import {
   PushpinOutlined,
   RightOutlined,
   TeamOutlined,
-  UserOutlined,
+  UserOutlined
 } from '@ant-design/icons'
 import { Menu, Layout, Button } from 'antd'
 import { useWindowWidth } from '@react-hook/window-size'
-import { AuthContext } from '../../context/auth'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 const { Sider } = Layout
 
@@ -24,34 +24,62 @@ function getItem(label, key, icon, children, type, ...props) {
     children,
     label,
     type,
-    ...props,
+    ...props
   }
 }
 const items = [
-  getItem('Dashboard', '/admin', <BarChartOutlined />),
+  getItem(
+    <Link href="/admin">
+      <BarChartOutlined style={{ paddingRight: '10px' }} />
+      Dashboard
+    </Link>,
+    'dashboard'
+  ),
   getItem('Posts', 'sub1', <PushpinOutlined />, [
-    getItem('All Posts', '/admin/posts'),
-    getItem('Add New', '/admin/posts/new'),
-    getItem('Categories', '/admin/categories'),
+    getItem(<Link href="/admin/posts">All Posts</Link>, 'posts'),
+    getItem(<Link href="/admin/posts/new">Add New</Link>, 'newPost'),
+    getItem(<Link href="/admin/categories">Categories</Link>, 'categories')
   ]),
   getItem('Media', 'sub2', <CameraOutlined />, [
-    getItem('Library', '/admin/media'),
+    getItem(<Link href="/admin/media">Library</Link>, 'media')
     //getItem('Add New', '/admin/media/new'),
   ]),
-  getItem('Comments', '/admin/comments', <CommentOutlined />),
+  getItem(
+    <Link href="/admin/comments">
+      <CommentOutlined style={{ paddingRight: '10px' }} />
+      Comments
+    </Link>,
+    'comments'
+  ),
   getItem('Users', 'sub3', <TeamOutlined />, [
-    getItem('All Users', '/admin/users'),
-    getItem('Add New', '/admin/users/new'),
+    getItem(
+      <Link href="/admin/users" passHref>
+        All Users
+      </Link>,
+      'users'
+    ),
+    getItem(<Link href="/admin/users/new">Add New</Link>, 'newUser')
   ]),
-  getItem('Profile', '/admin/users/userid', <UserOutlined />),
-  getItem('Customize', '/admin/customize', <BgColorsOutlined />),
+  getItem(
+    <Link href="/admin/users/userid">
+      <UserOutlined style={{ paddingRight: '10px' }} />
+      Profile
+    </Link>,
+    'profile'
+  ),
+  getItem(
+    <Link href="/admin/customize">
+      <BgColorsOutlined style={{ paddingRight: '10px' }} />
+      Customize
+    </Link>,
+    'customize'
+  )
 ]
 const AdminNav = () => {
   //state
   const [collapsed, setCollapsed] = useState(false)
   const [current, setCurrent] = useState('')
-  //context
-  const [auth, setAuth] = useContext(AuthContext)
+
   //router
   const router = useRouter()
 
@@ -64,16 +92,6 @@ const AdminNav = () => {
   const onClick = (e) => {
     console.log('click ', e)
     setCurrent(e.key)
-    router.push(`${e.key}`)
-  }
-
-  const signOut = () => {
-    //remove from localStorage
-    localStorage.removeItem('auth')
-    //remove from context
-    setAuth({ user: null, token: '' })
-    //redirect to home
-    router.push('/')
   }
 
   useEffect(() => {
@@ -93,7 +111,7 @@ const AdminNav = () => {
       <div
         style={{
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'center'
         }}
       >
         <Button
@@ -106,11 +124,13 @@ const AdminNav = () => {
       </div>
       <div style={{ height: '90vh' }}>
         <Menu
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['']}
+          //defaultSelectedKeys={['1']}
+          openKeys={['sub1', 'sub2', 'sub3']}
+          //selectedKeys={current}
+          //openKeys={''}
           mode="inline"
           items={items}
-          onClick={onClick}
+          //onClick={onClick}
           //collapsed={collapsed}
           theme="dark"
         />

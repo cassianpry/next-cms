@@ -2,28 +2,31 @@ import AdminLayout from '../../../src/components/layout/AdminLayout'
 import generator from 'generate-password'
 import { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { Button, Checkbox, Col, Form, Input, Row, Select } from 'antd'
+import { Button, Col, Form, Input, Row, Select } from 'antd'
 import {
   DesktopOutlined,
-  HomeOutlined,
   LockOutlined,
   MailOutlined,
   UserAddOutlined,
   UserOutlined
 } from '@ant-design/icons'
 import axios from 'axios'
-import { useRouter } from 'next/router'
 import { AuthContext } from '../../../src/context/auth'
+import { useRouter } from 'next/router'
+import ImageLibrary from '../../../src/components/media/ImageLibrary'
+import { MediaContext } from '../../../src/context/media'
 
-const NewUser = () => {
+const UpdateUser = () => {
   //state
-  // const [name, setName] = useState('')
-  // const [email, setEmail] = useState('')
-  // const [website, setWebsite] = useState('')
-  const [form] = Form.useForm()
+  const [id, setId] = useState('')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [website, setWebsite] = useState('')
+  const [role, setRole] = useState('')
+  const [image, setImage] = useState({})
   const [genPassword, setGenPassword] = useState(
     generator.generate({
-      length: 6,
+      length: 8,
       numbers: true,
       symbols: true,
       uppercase: true,
@@ -31,34 +34,38 @@ const NewUser = () => {
       strict: true
     })
   )
-  // const [confirmPassword, setConfirmPassword] = useState('')
-  // const [role, setRole] = useState('')
   const [loading, setLoading] = useState(false)
+
+  //context
+  const [auth, setAuth] = useContext(AuthContext)
+  const [media, setMedia] = useContext(MediaContext)
+  const [form] = Form.useForm()
 
   //hook
   const router = useRouter()
 
-  //contex
-  const [auth, setAuth] = useContext(AuthContext)
-
-  useEffect(() => {
-    if (auth?.token) {
-      router.push('')
-    }
-  }, [auth])
-
   const onFinish = async (values) => {
     console.log('Received values of form: ', values)
-    setLoading(true)
+
     try {
-      const { data } = await axios.post('/create-user', values)
-      if (data?.error) {
+      setLoading(true)
+      values.id = id
+      values.image = media?.selected?._id
+        ? media?.selected?._id
+        : image?._id
+        ? image?._id
+        : undefined
+
+      const { data } = await axios.put('/update-user-by-admin', values)
+      console.log('User Update Info ->', values)
+      if (values?.error) {
         setLoading(false)
         toast.error(data.error)
       } else {
         toast.success('User created successfully.')
         setLoading(false)
         //form.resetFields()
+        //router.push('/admin/users')
       }
     } catch (err) {
       toast.error('Unable to create an user. Reload the page and try again.')
@@ -66,6 +73,23 @@ const NewUser = () => {
       setLoading(false)
     }
   }
+  const currentUser = async () => {
+    try {
+      const { data } = await axios.get(`/user/${router.query.id}`)
+      setId(data._id)
+      setName(data.name)
+      setEmail(data.email)
+      setWebsite(data.website)
+      setRole(data.role)
+      setImage(data.image)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    if (auth?.token) currentUser()
+  }, [auth])
 
   // const handleSubmit = (e) => {
   //   e.preventDefault()
@@ -81,16 +105,28 @@ const NewUser = () => {
     <AdminLayout>
       <Row>
         <Col span={12} offset={6}>
-          <h2>Add new user</h2>
+          <h2 style={{ marginBottom: '10px' }}>Update user informarion</h2>
+
           <Form
-            name="normal_login"
+            form={form}
+            style={{ margin: '30px 0px 10px 0px' }}
+            name="create_user"
             initialValues={{
-              remember: true
+              id: id,
+              name: name,
+              email: email,
+              website: website,
+              role: role,
+              image: media?.selected?._id
+                ? media?.selected?._id
+                : image?._id
+                ? image?._id
+                : undefined
             }}
             onFinish={onFinish}
           >
+            <Form.Item name="id"></Form.Item>
             <Form.Item
-              style={{ paddingBottom: '5px' }}
               name="name"
               rules={[
                 {
@@ -106,7 +142,6 @@ const NewUser = () => {
             </Form.Item>
 
             <Form.Item
-              style={{ paddingBottom: '5px' }}
               name="email"
               rules={[
                 {
@@ -122,21 +157,21 @@ const NewUser = () => {
               />
             </Form.Item>
 
-            <Form.Item style={{ paddingBottom: '5px' }} name="website">
+            <Form.Item name="website">
               <Input
-                prefix={<HomeOutlined style={{ color: 'black' }} />}
-                placeholder="Your Website"
+                prefix={<DesktopOutlined style={{ color: 'black' }} />}
+                placeholder="https://www.yoursite.com"
               />
             </Form.Item>
 
             <Form.Item>
-              <div style={{ display: 'flex', margin: 'auto' }}>
+              <div style={{ display: 'flex' }}>
                 <Button
                   type="primary"
                   onClick={() =>
                     setGenPassword(
                       generator.generate({
-                        length: 6,
+                        length: 8,
                         numbers: true,
                         symbols: true,
                         strict: true
@@ -146,23 +181,11 @@ const NewUser = () => {
                 >
                   Generate Password
                 </Button>
-                <Input.Password
-                  style={{ marginLeft: '5px' }}
-                  value={genPassword}
-                />
+                <Input.Password value={genPassword} />
               </div>
             </Form.Item>
 
-            <Form.Item
-              style={{ paddingBottom: '5px' }}
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Password!'
-                }
-              ]}
-            >
+            <Form.Item name="password">
               <Input.Password
                 prefix={<LockOutlined style={{ color: 'black' }} />}
                 type="password"
@@ -170,16 +193,7 @@ const NewUser = () => {
               />
             </Form.Item>
 
-            <Form.Item
-              style={{ paddingBottom: '5px' }}
-              name="confirmpassword"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please confirm your Password!'
-                }
-              ]}
-            >
+            <Form.Item name="confirmpassword">
               <Input.Password
                 prefix={<LockOutlined style={{ color: 'black' }} />}
                 type="password"
@@ -191,24 +205,15 @@ const NewUser = () => {
               name="role"
               rules={[{ required: true, message: 'Please select a role.' }]}
             >
-              <Select
-                initialValues="Subscriber"
-                placeholder="Select an user role"
-              >
+              <Select placeholder="Select an user role">
                 <Select.Option value="Admin">Admin</Select.Option>
                 <Select.Option value="Author">Author</Select.Option>
                 <Select.Option value="Subscriber">Subscriber</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item name="checked" valuePropName="checked">
-              <Checkbox>
-                Send the new user an email about their account.
-              </Checkbox>
-            </Form.Item>
 
             <Form.Item>
               <Button
-                style={{ width: '100%' }}
                 type="primary"
                 htmlType="submit"
                 className="login-form-button"
@@ -216,14 +221,61 @@ const NewUser = () => {
                 disabled={loading}
                 icon={<UserAddOutlined />}
               >
-                Add User
+                Update User
               </Button>
             </Form.Item>
+            <Form.Item name="image">
+              <ImageLibrary />
+            </Form.Item>
           </Form>
+          {/* <Input
+            style={{ margin: '20px 0px 10px 0px' }}
+            size="large"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            style={{ margin: '10px 0px 10px 0px' }}
+            size="large"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            style={{ margin: '10px 0px 10px 0px' }}
+            size="large"
+            placeholder="Website"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+          />
+          <div style={{ display: 'flex' }}>
+            <Button
+              style={{ margin: '10px 0px 10px 0px' }}
+              type="primary"
+              size="large"
+              onClick={() =>
+                setPassword(
+                  generator.generate({
+                    length: 6,
+                    numbers: true,
+                    symbols: true,
+                    strict: true,
+                  })
+                )
+              }
+            >
+              Generate Password
+            </Button>
+            <Input.Password
+              style={{ margin: '10px 0px 10px 0px' }}
+              value={password}
+            />
+          </div> */}
         </Col>
       </Row>
     </AdminLayout>
   )
 }
 
-export default NewUser
+export default UpdateUser
