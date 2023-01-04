@@ -6,7 +6,7 @@ import {
   LogoutOutlined,
   SettingOutlined,
   SolutionOutlined,
-  UserOutlined,
+  UserOutlined
 } from '@ant-design/icons'
 import { Menu } from 'antd'
 import { useRouter } from 'next/router'
@@ -19,7 +19,7 @@ const getItem = (label, key, icon, children, type) => {
     icon,
     children,
     label,
-    type,
+    type
   }
 }
 
@@ -47,23 +47,23 @@ const NavBar = () => {
     {
       label: 'CMS',
       key: '/',
-      icon: <HomeOutlined />,
+      icon: <HomeOutlined />
     },
     {
       label: 'Posts',
       key: '/posts',
-      icon: <DatabaseOutlined />,
+      icon: <DatabaseOutlined />
     },
     auth?.user === null && {
       style: { marginLeft: 'auto' },
       label: 'Register',
       key: '/signup',
-      icon: <SolutionOutlined />,
+      icon: <SolutionOutlined />
     },
     auth?.user === null && {
       label: 'Login',
       key: '/signin',
-      icon: <LoginOutlined />,
+      icon: <LoginOutlined />
     },
     auth?.user !== null && {
       label: `${auth?.user?.name}` || 'Dasboard',
@@ -77,27 +77,18 @@ const NavBar = () => {
             {
               label: 'Dashboard',
               key: roleBasedLinks(),
-              icon: <SettingOutlined />,
-            },
-          ],
+              icon: <SettingOutlined />
+            }
+          ]
         },
 
         {
-          type: 'divider',
+          type: 'divider'
         },
-        getItem('Logout', 'logout', <LogoutOutlined />),
-      ],
-    },
+        getItem('Logout', 'logout', <LogoutOutlined />)
+      ]
+    }
   ]
-
-  // const signOut = () => {
-  //   //remove from localStorage
-  //   localStorage.removeItem('auth')
-  //   //remove from context
-  //   setAuth({ user: null, token: '' })
-  //   //redirect to home
-  //   router.push('/')
-  // }
 
   const onClick = (e) => {
     console.log('click ', e)
@@ -105,12 +96,12 @@ const NavBar = () => {
     if (e.key === 'logout') {
       //remove from localStorage
       localStorage.removeItem('auth')
-      //remove from context
-      setAuth({ user: null, token: '' })
       //redirect to home
       router.push('/')
       setCurrent('/')
       toast.success('Successfully Logged out')
+      //remove from context
+      setAuth({ user: null, token: '' })
     } else {
       router.push(`${e.key}`)
     }

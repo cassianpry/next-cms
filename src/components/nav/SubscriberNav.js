@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
+import Link from 'next/link'
 import {
   BarChartOutlined,
   CommentOutlined,
   LeftOutlined,
   RightOutlined,
-  UserOutlined,
+  UserOutlined
 } from '@ant-design/icons'
 import { Menu, Layout, Button } from 'antd'
 import { useWindowWidth } from '@react-hook/window-size'
@@ -20,14 +21,10 @@ function getItem(label, key, icon, children, type, ...props) {
     children,
     label,
     type,
-    ...props,
+    ...props
   }
 }
-const items = [
-  getItem('Dashboard', '/subscriber', <BarChartOutlined />),
-  getItem('Comments', '/subscriber/comments', <CommentOutlined />),
-  getItem('Profile', '/subscriber/profile', <UserOutlined />),
-]
+
 const SubscriberNav = () => {
   //state
   const [collapsed, setCollapsed] = useState(false)
@@ -43,20 +40,20 @@ const SubscriberNav = () => {
     setCollapsed(!collapsed)
   }
 
-  const onClick = (e) => {
-    console.log('click ', e)
-    setCurrent(e.key)
-    router.push(`${e.key}`)
-  }
+  // const onClick = (e) => {
+  //   console.log('click ', e)
+  //   setCurrent(e.key)
+  //   router.push(`${e.key}`)
+  // }
 
-  const signOut = () => {
-    //remove from localStorage
-    localStorage.removeItem('auth')
-    //remove from context
-    setAuth({ user: null, token: '' })
-    //redirect to home
-    router.push('/')
-  }
+  // const signOut = () => {
+  //   //remove from localStorage
+  //   localStorage.removeItem('auth')
+  //   //remove from context
+  //   setAuth({ user: null, token: '' })
+  //   //redirect to home
+  //   router.push('/')
+  // }
 
   useEffect(() => {
     if (onlyWidth < 800) {
@@ -65,6 +62,30 @@ const SubscriberNav = () => {
       setCollapsed(false)
     }
   }, [onlyWidth])
+
+  const items = [
+    getItem(
+      <Link href="/subscriber">
+        <BarChartOutlined style={{ paddingRight: '10px' }} />
+        Dashboard
+      </Link>,
+      'dashboard'
+    ),
+    getItem(
+      <Link href="/subscriber/comments">
+        <CommentOutlined style={{ paddingRight: '10px' }} />
+        Comments
+      </Link>,
+      'comments'
+    ),
+    getItem(
+      <Link href={`subscriber/${auth?.user?._id}`}>
+        <UserOutlined style={{ paddingRight: '10px' }} />
+        Profile
+      </Link>,
+      'profile'
+    )
+  ]
 
   return (
     <Sider
@@ -75,7 +96,7 @@ const SubscriberNav = () => {
       <div
         style={{
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'center'
         }}
       >
         <Button
@@ -88,11 +109,11 @@ const SubscriberNav = () => {
       </div>
       <div style={{ height: '90vh' }}>
         <Menu
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['']}
+          // defaultSelectedKeys={['1']}
+          // defaultOpenKeys={['']}
           mode="inline"
           items={items}
-          onClick={onClick}
+          //onClick={onClick}
           //collapsed={collapsed}
           theme="dark"
         />

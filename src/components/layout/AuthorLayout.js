@@ -31,7 +31,7 @@ export default function AuthorLayout({ children }) {
     try {
       const { data } = await axios.get('/current-author')
       setLoading(false)
-      //console.log(data);
+      console.log('Current User=> ', data)
     } catch (err) {
       console.log(err)
       router.push('/')
@@ -46,7 +46,7 @@ export default function AuthorLayout({ children }) {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: 500,
+            height: 500
           }}
         >
           <p>

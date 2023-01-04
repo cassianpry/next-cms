@@ -9,6 +9,8 @@ const LoadingComponent = () => {
         justifyContent: 'center',
         alignItems: 'center',
         height: 500,
+        backgroundColor: 'rgb(30, 30, 30)',
+        color: 'rgb(30, 30, 30)'
       }}
     >
       <p>

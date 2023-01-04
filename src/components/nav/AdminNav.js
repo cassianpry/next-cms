@@ -43,10 +43,10 @@ const AdminNav = () => {
     setCollapsed(!collapsed)
   }
 
-  const onClick = (e) => {
-    console.log('click ', e)
-    setCurrent(e.key)
-  }
+  // const onClick = (e) => {
+  //   console.log('click ', e)
+  //   setCurrent(e.key)
+  // }
 
   useEffect(() => {
     if (onlyWidth < 800) {
@@ -90,7 +90,7 @@ const AdminNav = () => {
       getItem(<Link href="/admin/users/new">Add New</Link>, 'newUser')
     ]),
     getItem(
-      <Link href={`/admin/${auth?.user?._id}`}>
+      <Link href={`admin/${auth?.user?._id}`}>
         <UserOutlined style={{ paddingRight: '10px' }} />
         Profile
       </Link>,

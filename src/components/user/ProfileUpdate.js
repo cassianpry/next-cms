@@ -60,20 +60,43 @@ const ProfileUpdate = () => {
     })
     setLoading(true)
     try {
-      const { data } = await axios.put('/update-user-by-admin', {
-        id,
-        name,
-        email,
-        password,
-        confirmpassword,
-        website,
-        role,
-        image
-      })
-      toast.success('User created successfully.')
-      setLoading(false)
-      form.resetFields()
-      router.push('/admin/users')
+      if (auth.user.role === 'Admin') {
+        const { data } = await axios.put('/update-user-by-admin', {
+          id,
+          name,
+          email,
+          password,
+          confirmpassword,
+          website,
+          role,
+          image
+        })
+        if (data.error) {
+          setLoading(false)
+          toast.error(data.error)
+        } else {
+          toast.success('User updated successfully.')
+          setLoading(false)
+        }
+      } else {
+        const { data } = await axios.put('/update-user', {
+          id,
+          name,
+          email,
+          password,
+          confirmpassword,
+          website,
+          role,
+          image
+        })
+        if (data.error) {
+          setLoading(false)
+          toast.error(data.error)
+        } else {
+          toast.success('User updated successfully.')
+          setLoading(false)
+        }
+      }
     } catch (err) {
       toast.error('Unable to create an user. Reload the page and try again.')
       console.log(err)

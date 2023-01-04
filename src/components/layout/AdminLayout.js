@@ -42,7 +42,7 @@ export default function AdminLayout({ children }) {
 
   return (
     <Layout theme="dark">
-      {loading ? (
+      {auth?.token && loading ? (
         <LoadingComponent />
       ) : (
         <>
