@@ -81,7 +81,7 @@ const NewUser = () => {
     <AdminLayout>
       <Row>
         <Col span={12} offset={6}>
-          <h2>Add new user</h2>
+          <h1>Add new user</h1>
           <Form
             name="normal_login"
             initialValues={{

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import {
   BarChartOutlined,
   BgColorsOutlined,
@@ -14,7 +14,7 @@ import { Menu, Layout, Button } from 'antd'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-
+import { AuthContext } from '../../context/auth'
 const { Sider } = Layout
 
 function getItem(label, key, icon, children, type, ...props) {
@@ -27,55 +27,9 @@ function getItem(label, key, icon, children, type, ...props) {
     ...props
   }
 }
-const items = [
-  getItem(
-    <Link href="/admin">
-      <BarChartOutlined style={{ paddingRight: '10px' }} />
-      Dashboard
-    </Link>,
-    'dashboard'
-  ),
-  getItem('Posts', 'sub1', <PushpinOutlined />, [
-    getItem(<Link href="/admin/posts">All Posts</Link>, 'posts'),
-    getItem(<Link href="/admin/posts/new">Add New</Link>, 'newPost'),
-    getItem(<Link href="/admin/categories">Categories</Link>, 'categories')
-  ]),
-  getItem('Media', 'sub2', <CameraOutlined />, [
-    getItem(<Link href="/admin/media">Library</Link>, 'media')
-    //getItem('Add New', '/admin/media/new'),
-  ]),
-  getItem(
-    <Link href="/admin/comments">
-      <CommentOutlined style={{ paddingRight: '10px' }} />
-      Comments
-    </Link>,
-    'comments'
-  ),
-  getItem('Users', 'sub3', <TeamOutlined />, [
-    getItem(
-      <Link href="/admin/users" passHref>
-        All Users
-      </Link>,
-      'users'
-    ),
-    getItem(<Link href="/admin/users/new">Add New</Link>, 'newUser')
-  ]),
-  getItem(
-    <Link href="/admin/users/userid">
-      <UserOutlined style={{ paddingRight: '10px' }} />
-      Profile
-    </Link>,
-    'profile'
-  ),
-  getItem(
-    <Link href="/admin/customize">
-      <BgColorsOutlined style={{ paddingRight: '10px' }} />
-      Customize
-    </Link>,
-    'customize'
-  )
-]
 const AdminNav = () => {
+  //context
+  const [auth, setAuth] = useContext(AuthContext)
   //state
   const [collapsed, setCollapsed] = useState(false)
   const [current, setCurrent] = useState('')
@@ -101,6 +55,55 @@ const AdminNav = () => {
       setCollapsed(false)
     }
   }, [onlyWidth])
+
+  const items = [
+    getItem(
+      <Link href="/admin">
+        <BarChartOutlined style={{ paddingRight: '10px' }} />
+        Dashboard
+      </Link>,
+      'dashboard'
+    ),
+    getItem('Posts', 'sub1', <PushpinOutlined />, [
+      getItem(<Link href="/admin/posts">All Posts</Link>, 'posts'),
+      getItem(<Link href="/admin/posts/new">Add New</Link>, 'newPost'),
+      getItem(<Link href="/admin/categories">Categories</Link>, 'categories')
+    ]),
+    getItem('Media', 'sub2', <CameraOutlined />, [
+      getItem(<Link href="/admin/media">Library</Link>, 'media')
+      //getItem('Add New', '/admin/media/new'),
+    ]),
+    getItem(
+      <Link href="/admin/comments">
+        <CommentOutlined style={{ paddingRight: '10px' }} />
+        Comments
+      </Link>,
+      'comments'
+    ),
+    getItem('Users', 'sub3', <TeamOutlined />, [
+      getItem(
+        <Link href="/admin/users" passHref>
+          All Users
+        </Link>,
+        'users'
+      ),
+      getItem(<Link href="/admin/users/new">Add New</Link>, 'newUser')
+    ]),
+    getItem(
+      <Link href={`/admin/${auth?.user?._id}`}>
+        <UserOutlined style={{ paddingRight: '10px' }} />
+        Profile
+      </Link>,
+      'profile'
+    ),
+    getItem(
+      <Link href="/admin/customize">
+        <BgColorsOutlined style={{ paddingRight: '10px' }} />
+        Customize
+      </Link>,
+      'customize'
+    )
+  ]
 
   return (
     <Sider
