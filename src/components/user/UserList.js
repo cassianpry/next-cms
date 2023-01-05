@@ -1,16 +1,19 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
-import { Avatar, Col, List, Row } from 'antd'
+import { Avatar, Col, List, Row, Input } from 'antd'
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AuthContext } from '../../../src/context/auth'
 import { toast } from 'react-hot-toast'
 
+const { Search } = Input
+
 export default function Users() {
   // context
   const [auth, setAuth] = useContext(AuthContext)
   //state
   const [users, setUsers] = useState([])
+  const [keyword, setKeyword] = useState('')
 
   useEffect(() => {
     if (auth?.token) {
@@ -44,13 +47,23 @@ export default function Users() {
     }
   }
 
+  const filteredUsesrs = users?.filter((u) =>
+    u.name.toLowerCase().includes(keyword.toLowerCase())
+  )
+
   return (
     <Row>
       <Col span={24}>
-        <h1 style={{ marginBottom: '-5px' }}>All Users: ({users.length})</h1>
+        <h1 style={{ marginBottom: '5px' }}>All Users: ({users.length})</h1>
+        <Search
+          placeholder="Type something to search..."
+          enterButton
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
         <List
           itemLayout="horizontal"
-          dataSource={users}
+          dataSource={filteredUsesrs}
           renderItem={(user) => (
             <List.Item
               key={user._id}

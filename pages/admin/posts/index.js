@@ -1,15 +1,25 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Col, List, Row } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { Button, Col, Input, Row } from 'antd'
 import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import AdminLayout from '../../../src/components/layout/AdminLayout'
 import PostList from '../../../src/components/posts/PostList'
+import { AuthContext } from '../../../src/context/auth'
 import { PostContext } from '../../../src/context/post'
 
+const { Search } = Input
+
 const Posts = () => {
+  //context
   const [post, setPost] = useContext(PostContext)
+  const [auth, setAuth] = useContext(AuthContext)
+
+  //state
+  const [keyword, setKeyword] = useState('')
+
+  //hook
   const router = useRouter()
 
   const fetchPosts = async () => {
@@ -22,8 +32,8 @@ const Posts = () => {
   }
 
   useEffect(() => {
-    fetchPosts()
-  }, [])
+    if (auth?.token) fetchPosts()
+  }, [auth?.token])
 
   const handleEdit = async (post) => {
     //console.log('EDIT POST => ', post)
@@ -63,8 +73,23 @@ const Posts = () => {
             </Button>
           </Link>
           <h1 style={{ marginTop: '10px' }}>{post.posts?.length} Posts</h1>
+          <Search
+            placeholder="Type something to search..."
+            enterButton
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+
+          {/* <Input
+            placeholder="Search..."
+            type="search"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value.toLowerCase())}
+          /> */}
           <PostList
-            posts={post.posts}
+            posts={post.posts?.filter((p) =>
+              p.title.toLowerCase().includes(keyword.toLowerCase())
+            )}
             handleDelete={handleDelete}
             handleEdit={handleEdit}
           />

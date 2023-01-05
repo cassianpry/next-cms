@@ -400,6 +400,15 @@ span {
 
 .post-list-item {
   background-color: none;
+  color: white !important;
+}
+
+.ant-list-item-meta-title {
+  margin-top: 5px;
+}
+
+.ant-list-item-meta-description {
+  color: rgba(163, 163, 163, 0.65) !important;
 }
 
 .post-list-item:hover {
