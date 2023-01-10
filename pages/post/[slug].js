@@ -41,9 +41,9 @@ export const SinglePost = ({ post, postComments }) => {
   useEffect(() => {
     console.log(post.content)
     if (
-      post.length < 1 &&
-      post.content === '' &&
-      post.content === 'undefined' &&
+      post.length < 1 ||
+      post.content === '' ||
+      post.content === 'undefined' ||
       post.content === null
     ) {
       setLoading(true)
@@ -78,7 +78,7 @@ export const SinglePost = ({ post, postComments }) => {
                   <p className="tabs-text">
                     {dayjs(post.createdAt).format('MMMM D, YYYY - hh:mm')}
                     &nbsp;/&nbsp;
-                    {comments.length}&nbsp;Comments / in&nbsp;
+                    {comments.length}&nbsp;Comment(s) / in&nbsp;
                     {post?.categories.map((cat) => (
                       <span key={cat._id}>
                         <Link href={`/categories/${cat.slug}`}>
@@ -100,6 +100,7 @@ export const SinglePost = ({ post, postComments }) => {
                     }}
                   />
                 </Card>
+
                 <CommentForm
                   comment={comment}
                   setComment={setComment}
@@ -107,12 +108,17 @@ export const SinglePost = ({ post, postComments }) => {
                   loading={loading}
                 />
                 <div style={{ marginTop: '30px' }}>
-                  <h4>Comments:</h4>
+                  <h3>Comments:</h3>
                   <List
                     itemLayout="horizontal"
                     dataSource={comments}
                     renderItem={(item) => (
-                      <List.Item key={item._id} className="post-list-item">
+                      <List.Item
+                        key={item._id}
+                        id={item._id}
+                        style={{ color: 'gray' }}
+                        //className="post-list-item"
+                      >
                         <List.Item.Meta
                           avatar={
                             <Avatar>{item?.postedBy?.name?.charAt(0)}</Avatar>
@@ -130,7 +136,15 @@ export const SinglePost = ({ post, postComments }) => {
               </>
             )}
           </Col>
-          <Col xs={22} xl={6} offset={1}></Col>
+          <Col xs={22} xl={6} offset={1}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+            culpa qui officia deserunt mollit anim id est laborum.
+          </Col>
         </Row>
       </div>
     </>
